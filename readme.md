@@ -381,11 +381,10 @@ plt.show()
 ---
 
 
-# Parte 2 - Métodos iterativos.
-### ¿En qué consisten los métodos iterativos?
-
-
 
 ###### Referencias:
 1. Libro de la clase
 2. Talleres del curso subidos a E-aulas
+
+###### Trabajo pendiente: 
+1. Preguntar sobre que hacer con los métodos iterativos que ya están programados.
