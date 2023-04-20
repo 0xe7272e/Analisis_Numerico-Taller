@@ -368,6 +368,15 @@ plt.show()
 | Aproximación trigonométrica discreta                         | Simple y eficiente                                   | Puede tener dificultades para aproximar funciones complicadas | Funciones periódicas, datos con ruido          | Funciones no periódicas                 |
 | Transformada rápida de Fourier (FFT)                         | Eficiente para cálculo en grandes conjuntos de datos | Requiere una elección adecuada de la resolución               | Análisis de señales, procesamiento de imágenes | Funciones no periódicas                 |
 
+### Tabla de tiempos computacionales y memorias
+
+    | Método                         | Aproximación          | Big Oh       | Memoria  |
+    |--------------------------------|-----------------------|--------------|----------|
+    | Ajuste de mínimos cuadrados    | Funciones arbitrarias | $O(n^3)$     | $O(n^2)$ |
+    | Polinomios de Taylor           | Funciones analíticas  | $O(n^2)$     | $O(n)$   |
+    | Serie de Fourier               | Funciones periódicas  | $O(n\log n)$ | $O(n)$   |
+    | Polinomios trigonométricos     | Funciones periódicas  | $O(n^2)$     | $O(n)$   |
+    | Transformada Rápida de Fourier | Funciones periódicas  | $O(n\log n)$ | $O(n)$   |
 
 ---
 
