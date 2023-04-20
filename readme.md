@@ -75,18 +75,6 @@ print("Pendiente de la línea:", b)
 ```python
 import numpy as np
 def polynomial_regression(x, y, n):
-    """
-    Realiza una aproximación polinómica de grado n utilizando el método de mínimos cuadrados.
-    
-    Args:
-        x: una lista de valores de la variable independiente
-        y: una lista de valores de la variable dependiente
-        n: el grado del polinomio
-    
-    Returns:
-        Una tupla que contiene los coeficientes del polinomio
-    """
-    
     # Construir la matriz de diseño
     X = []
     for i in range(len(x)):
@@ -261,8 +249,128 @@ plt.show()
 ```
 ![polinomios ortogonales](img/polinomiosorotonales.png)
 
+#### Aproximación trigonométrica discreta:
+
+
+-El método de aproximación trigonométrica discreta es una técnica utilizada en teoría de aproximación para aproximar una función mediante una combinación lineal de funciones trigonométricas discretas. Se realiza utilizando la siguiente formula:
+
+$$
+f(x) \approx a_0 + \sum_{k=1}^{n} [a_k \cos(kx) + b_k \sin(kx)]
+$$
+
+donde $a_0$, $a_k$ y $b_k$ son coeficientes que se determinan a partir de la función que se desea aproximar y $n$ es el número de términos utilizados en la aproximación.
+
+
+#### Implementación
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+def DFT(f):
+    N = len(f)
+    c = np.zeros(N, dtype=complex)
+    for k in range(N):
+        for n in range(N):
+            c[k] += f[n] * np.exp(-2j*np.pi*k*n/N)
+    return c
+
+def IDFT(c):
+    N = len(c)
+    f = np.zeros(N, dtype=complex)
+    for n in range(N):
+        for k in range(N):
+            f[n] += c[k] * np.exp(2j*np.pi*k*n/N)
+        f[n] /= N
+    return f
+
+def trig_approx(f, M):
+    N = len(f)
+    L = N/2
+    x = np.linspace(-L, L, N+1)[:-1]
+    c = DFT(f)
+    cf = np.zeros(N, dtype=complex)
+    cf[0] = c[0]/N
+    for m in range(1,M+1):
+        cf[m] = c[m]/N
+        cf[-m] = c[-m]/N
+    return lambda x: np.real(np.sum(cf[k] * np.exp(2j*np.pi*k*x/L) for k in range(-M,M+1)))
+
+# Ejemplo de uso
+f = lambda x: np.sin(x)
+M = 2
+N = 2*M+1
+L = np.pi
+x = np.linspace(-L,L,N)
+f_vals = f(x)
+f_approx = trig_approx(f_vals, M)
+
+plt.plot(x, f_vals, label='Función original')
+plt.plot(x, f_approx(x), label='Aproximación')
+plt.legend()
+plt.show()
+```
+
+![Aproximacion Trigonométrica discreta 2 términos](img/trigonometricadiscreta.png)
+
+
+#### Transformada rápida de Fourier
+
+- La Transformada Rápida de Fourier (FFT, por sus siglas en inglés) es un algoritmo que permite calcular la transformada de Fourier discreta (DFT) de una secuencia de datos de manera más rápida que utilizando el método directo de la DFT. Es un algoritmo de divide y vencerás 
+
+#### Implementación
+
+```python
+import math
+import matplotlib.pyplot as plt
+
+def FFT(f):
+    # Calcula la FFT de una señal f
+    N = len(f)
+    if N == 1:
+        return f
+    else:
+        Feven = FFT([f[i] for i in range(0, N, 2)])
+        Fodd = FFT([f[i] for i in range(1, N, 2)])
+        combined = [0] * N
+        for m in range(N//2):
+            combined[m] = Feven[m] + math.e**(-2j*math.pi*m/N)*Fodd[m]
+            combined[m + N//2] = Feven[m] - math.e**(-2j*math.pi*m/N)*Fodd[m]
+        return combined
+
+# Crear un arreglo de puntos de prueba
+t = [i/100 for i in range(20)]
+f = [math.sin(2*math.pi*5*i) + math.sin(2*math.pi*10*i) for i in t]
+
+# Calcular la transformada rápida de fourier de los puntos
+f_fft = FFT(f)
+
+# Calcular la frecuencia de cada muestra en los puntos original
+freq = [i/(t[-1]-t[0]) for i in range(len(t))]
+
+# Graficar los puntos original y los puntos reconstruidos de la FFT
+f_ifft = [i.real for i in FFT(f_fft[::-1])] # Calcula la transformada inversa de Fourier
+plt.plot(t, f, label='Señal original')
+plt.plot(t, f_ifft, label='FFT reconstruida')
+plt.legend()
+plt.show()
+```
+![FFT2](img/FFT2.png)
+
+### Tabla de comparación de métodos:
+
+| Método                                                       | Ventajas                                             | Desventajas                                                   | Bueno para                                     | Malo para                               |
+|--------------------------------------------------------------|------------------------------------------------------|---------------------------------------------------------------|------------------------------------------------|-----------------------------------------|
+| Aproximación por espacios de funciones                       | Versatilidad en la elección de funciones base        | La elección de las funciones puede ser complicada             | Funciones complicadas                          | Datos con patrones no lineales          |
+| Aproximación por series de Fourier                           | Buena aproximación de funciones periódicas           | Puede ser difícil de ajustar a funciones no periódicas        | Funciones periódicas                           | Funciones no periódicas                 |
+| Aproximación por series de Taylor                            | Aproximación exacta en un punto                      | Sólo es válido localmente, puede diverger lejos del punto     | Funciones analíticas en un punto               | Funciones no analíticas, singularidades |
+| Aproximación mediante polinomios ortogonales trigonométricos | Convergencia uniforme rápida                         | La elección de los polinomios puede ser complicada            | Funciones periódicas, datos con ruido          | Funciones no periódicas                 |
+| Aproximación trigonométrica discreta                         | Simple y eficiente                                   | Puede tener dificultades para aproximar funciones complicadas | Funciones periódicas, datos con ruido          | Funciones no periódicas                 |
+| Transformada rápida de Fourier (FFT)                         | Eficiente para cálculo en grandes conjuntos de datos | Requiere una elección adecuada de la resolución               | Análisis de señales, procesamiento de imágenes | Funciones no periódicas                 |
+
 
 ---
+
 
 # Parte 2 - Métodos iterativos.
 ### ¿En qué consisten los métodos iterativos?
