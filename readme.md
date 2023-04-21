@@ -381,7 +381,7 @@ plt.show()
 ---
 
 
-# Parte 1 - Métodos Iterativos.
+# Parte 2 - Métodos Iterativos.
 
 ## Introducción
 
