@@ -663,5 +663,3 @@ print(f"\nSe realizaron {k} iteraciones.")
 3. Numerical Analysis de Timothy Sauer 
 4. Numerical Recipes de Press et al.
 
-###### Trabajo pendiente: 
-1. Preguntar sobre que hacer con los métodos iterativos que ya están programados.
