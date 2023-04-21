@@ -381,6 +381,34 @@ plt.show()
 ---
 
 
+# Parte 1 - Métodos Iterativos.
+
+## Introducción
+
+- En el análisis numérico, los métodos iterativos son una clase de algoritmos que se utilizan para resolver sistemas de ecuaciones lineales de la forma $Ax=b$, donde $A$ es una matriz cuadrada y $x$ y $b$ son vectores.
+
+- Los métodos iterativos se pueden clasificar en dos categorías principales: los métodos iterativos directos y los métodos iterativos indirectos (o métodos iterativos de punto fijo)
+
+### Métodos directos:
+
+Los métodos iterativos directos resuelven el sistema de ecuaciones lineales mediante la aplicación de un número finito de operaciones aritméticas y algebraicas básicas, que producen una solución exacta después de un número fijo de pasos. Algunos ejemplos de métodos iterativos directos son la eliminación de Gauss-Jordan y la factorización LU.
+
+### Métodos indirectos: 
+
+Los métodos iterativos indirectos (o de punto fijo) resuelven el sistema de ecuaciones lineales mediante la aplicación repetida de una fórmula de recurrencia que produce una secuencia de vectores que se acercan gradualmente a la solución exacta del sistema. Algunos ejemplos de métodos iterativos indirectos son el método de Jacobi, el método de Gauss-Seidel y el método de relajación.
+
+### Diferencias:
+
+| Ventajas de los métodos iterativos indirectos | Desventajas de los métodos iterativos indirectos |
+| -------------------------------------------- | ----------------------------------------------- |
+| - Requieren menos memoria que los métodos directos, lo que los hace adecuados para sistemas grandes y dispersos. | - Pueden converger lentamente o no converger en absoluto para algunos sistemas. |
+| - Se pueden aplicar a matrices no simétricas y no definidas positivas. | - Pueden ser más difíciles de implementar y ajustar que los métodos directos. |
+| - Son más eficientes en términos de tiempo computacional para matrices dispersas. | - Pueden requerir un conocimiento previo de la matriz para establecer los parámetros de convergencia adecuados. |
+| - Son iterativos, lo que permite la posibilidad de una interrupción temprana si se alcanza una solución aceptable antes de que se completen todas las iteraciones. | - Pueden ser más susceptibles a errores de redondeo que los métodos directos. |
+| - Permiten la aplicación de técnicas de precondicionamiento que mejoran su eficiencia. | - Pueden requerir más iteraciones que los métodos directos para alcanzar la solución deseada. |
+
+
+
 
 ###### Referencias:
 1. Libro de la clase
