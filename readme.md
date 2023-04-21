@@ -410,6 +410,145 @@ Los métodos iterativos indirectos (o de punto fijo) resuelven el sistema de ecu
 
 
 
+### Con respecto a los métodos directos:
+
+
+#### Eliminación Gaussiana
+
+El método de eliminación Gaussiana es un algoritmo utilizado para resolver sistemas de ecuaciones lineales. Consiste en aplicar una serie de operaciones elementales de filas sobre la matriz aumentada del sistema, con el objetivo de transformarla en una matriz triangular superior.
+
+La matriz aumentada del sistema se construye colocando la matriz de coeficientes y el vector de términos independientes en una misma matriz, es decir, si tenemos un sistema de ecuaciones lineales de la forma:
+
+
+$a11*x1 + a12*x2 + a13*x3 + ... + a1n*xn = b1$
+
+$a21*x1 + a22*x2 + a23*x3 + ... + a2n*xn = b2$
+
+$a31*x1 + a32*x2 + a33*x3 + ... + a3n*xn = b3$
+
+...
+
+$an1*x1 + an2*x2 + an3*x3 + ... + ann*xn = bn$
+
+entonces la matriz correspondiente es
+
+
+| a11  a12  a13  ...  a1n  | b1 |
+| a21  a22  a23  ...  a2n  | b2 |
+| a31  a32  a33  ...  a3n  | b3 |
+| ...  ...  ...  ...  ...  | ...|
+| an1  an2  an3  ...  ann  | bn |
+
+Una vez construida la matriz aumentada, se aplica el siguiente proceso iterativo:
+
+1. Se elige la primera columna y se busca el elemento no nulo más cercano a la diagonal, que llamaremos pivote.
+
+2. Si el pivote no está en la diagonal, se intercambian las filas para que el pivote quede en la posición (i, i).
+
+3. Se eliminan los elementos debajo del pivote, restándole a cada fila un múltiplo de la fila que contiene el pivote, de tal forma que los elementos debajo del pivote queden en cero.
+
+4. Se repite el proceso con la siguiente columna, ignorando las filas y columnas anteriores ya transformadas.
+
+5. Finalmente, se obtiene una matriz triangular superior que se puede resolver fácilmente mediante sustitución hacia atrás
+
+El método de eliminación Gaussiana es muy útil para resolver sistemas de ecuaciones lineales grandes y para encontrar la inversa de una matriz. Sin embargo, su desventaja es que puede ser computacionalmente costoso para matrices muy grandes, ya que requiere de muchas operaciones elementales de filas.
+
+
+##### Implementación de eliminación gaussiana
+
+```python
+import numpy as np
+
+# Definir función de eliminación gaussiana
+def eliminacion_gaussiana(A, b):
+    n = len(b)
+    for k in range(n-1):
+        for i in range(k+1, n):
+            factor = A[i,k]/A[k,k]
+            A[i,k+1:n] = A[i,k+1:n] - factor*A[k,k+1:n]
+            b[i] = b[i] - factor*b[k]
+    return A, b
+
+# Resolver un sistema de ecuaciones utilizando eliminación gaussiana
+A = np.array([[2, 1, -1], [-3, -1, 2], [-2, 1, 2]], dtype=np.float64)
+b = np.array([8, -11, -3], dtype=np.float64)
+
+A_triang, b_triang = eliminacion_gaussiana(A, b)
+
+n = len(b)
+x = np.zeros(n, dtype=np.float64)
+x[n-1] = b_triang[n-1]/A_triang[n-1,n-1]
+for i in range(n-2, -1, -1):
+    x[i] = (b_triang[i] - np.dot(A_triang[i,i+1:n], x[i+1:n]))/A_triang[i,i]
+
+# Imprimir la solución por pantalla
+print("La solución del sistema Ax=b es:")
+print(x)
+```
+
+#### Factorización LU
+
+El método de factorización LU es un método numérico utilizado para resolver sistemas de ecuaciones lineales de la forma Ax = b, donde A es una matriz cuadrada y b es un vector de términos independientes. La idea del método es descomponer la matriz A en dos matrices, L y U, de manera que A = LU. La matriz L es una matriz triangular inferior con unos en su diagonal principal, mientras que la matriz U es una matriz triangular superior. Una vez que se ha realizado esta descomposición, se puede resolver el sistema Ax = b en dos etapas: primero se resuelve el sistema Ly = b utilizando sustitución hacia adelante, y luego se resuelve el sistema Ux = y utilizando sustitución hacia atrás.
+
+La ventaja de la factorización LU sobre los métodos iterativos y los métodos directos de eliminación gaussiana es que una vez que se ha realizado la descomposición LU, se puede resolver el sistema Ax = b para cualquier valor de b de manera eficiente. Esto es útil en situaciones en las que se necesita resolver el mismo sistema de ecuaciones con diferentes valores de b, como en la resolución de sistemas de ecuaciones diferenciales parciales.
+
+La desventaja de la factorización LU es que puede ser computacionalmente costosa en términos de memoria y cálculo, ya que se deben calcular y almacenar dos matrices nuevas, L y U, además de la matriz original A. Además, si la matriz A tiene elementos diagonales pequeños o ceros, la factorización LU puede ser inestable numéricamente y puede producir soluciones imprecisas.
+
+#### Implementación
+
+```python
+import numpy as np
+
+def factorizacionLU(A):
+    """
+    Función que realiza la factorización LU de una matriz A.
+    Devuelve dos matrices L y U tales que A = LU.
+    """
+    n = A.shape[0]
+    L = np.zeros((n, n))
+    U = np.zeros((n, n))
+
+    for j in range(n):
+        U[0, j] = A[0, j]
+        L[j, 0] = A[j, 0] / U[0, 0]
+
+    for i in range(1, n):
+        for j in range(i, n):
+            s1 = sum(U[k, j] * L[i, k] for k in range(i))
+            U[i, j] = A[i, j] - s1
+
+        for j in range(i, n):
+            s2 = sum(U[k, i] * L[j, k] for k in range(i))
+            L[j, i] = (A[j, i] - s2) / U[i, i]
+
+    np.fill_diagonal(L, 1)
+    return L, U
+
+
+A = np.array([[4, -1, 0],
+              [-1, 4, -1],
+              [0, -1, 4]])
+
+b = np.array([12, 1, 2])
+
+L, U = factorizacionLU(A)
+
+y = np.zeros_like(b)
+for i in range(len(b)):
+    y[i] = b[i] - np.dot(L[i,:i], y[:i])
+
+x = np.zeros_like(b)
+for i in reversed(range(len(b))):
+    x[i] = (y[i] - np.dot(U[i,i+1:], x[i+1:])) / U[i,i]
+
+print("La solución del sistema Ax = b es:")
+print(x)
+```
+
+
+
+
+### Con respecto a los métodos indirectos:
 
 #### Método de jacobi
 
@@ -423,11 +562,106 @@ $$
 
 donde $n$ es la dimensión de la matriz $A$ y $a_{ij}$ es el elemento de la matriz $A$ en la fila $i$ y la columna $j$. La fórmula actualiza cada componente $x_i^{(k+1)}$ de $x^{(k+1)}$ utilizando los valores antiguos de los componentes $x_j^{(k)}$ para $j \neq i$.
 
+###### Implementación
+
+```python
+import numpy as np
+
+def jacobi(A, b, x0, tol, max_iter):
+    n = len(A)
+    x = np.copy(x0)
+    x_prev = np.zeros(n)
+    iter = 0
+    while iter < max_iter and np.linalg.norm(x - x_prev) > tol:
+        x_prev = np.copy(x)
+        for i in range(n):
+            x[i] = (b[i] - np.dot(A[i, :n], x_prev) + A[i, i] * x_prev[i]) / A[i, i]
+        iter += 1
+    return x
+
+# Ejemplo de uso
+A = np.array([[10, 2, 1], [1, 5, 1], [2, 3, 10]])
+b = np.array([7, -8, 6])
+x0 = np.array([0, 0, 0])
+tol = 1e-8
+max_iter = 1000
+
+sol = jacobi(A, b, x0, tol, max_iter)
+
+print("La solución es:", sol)
+```
+
+
+#### Método de Gauss Seidel
+
+En el método de Gauss-Seidel, se utiliza la misma idea que en el método de Jacobi, es decir, se despeja cada variable de una ecuación lineal del sistema y se actualiza de forma iterativa. Sin embargo, en lugar de utilizar todas las aproximaciones anteriores para todas las variables, se utiliza la aproximación más reciente para las variables que ya han sido actualizadas en la misma iteración. De esta manera, el método de Gauss-Seidel puede converger más rápido que el método de Jacobi.
+
+La fórmula de actualización del método de Gauss-Seidel es similar a la del método de Jacobi, pero en lugar de utilizar todas las aproximaciones anteriores en cada iteración, se utilizan las más recientes. La fórmula es la siguiente:
+
+$$
+x_i^{(k+1)}=\frac{1}{a_{ii}}\left(b_i-\sum_{j<i}a_{ij}x_j^{(k+1)}-\sum_{j>i}a_{ij}x_j^{(k)}\right), \quad i=1,\dots,n
+$$
+
+#### Implementación
+
+```python
+def gauss_seidel(A, b, x0, tol, max_iter):
+    n = len(b)
+    x = x0.copy()
+    k = 0
+    err = tol + 1
+
+    while err > tol and k < max_iter:
+        x_old = x.copy()
+        for i in range(n):
+            x[i] = (b[i] - sum(A[i][j] * x[j] for j in range(i)) - sum(A[i][j] * x[j] for j in range(i + 1, n))) / A[i][i]
+        err = max(abs(x[i] - x_old[i]) for i in range(n))
+        k += 1
+
+    return x, k
+
+# Definir la matriz de coeficientes y el vector de términos independientes
+A = [[4, -1, 0, 0],
+     [-1, 4, -1, 0],
+     [0, -1, 4, -1],
+     [0, 0, -1, 3]]
+
+b = [15, 10, 10, 10]
+
+# Definir el vector de aproximación inicial, la tolerancia y el número máximo de iteraciones
+x0 = [0, 0, 0, 0]
+tol = 1e-6
+max_iter = 1000
+
+# Resolver el sistema de ecuaciones lineales mediante el método de Gauss-Seidel
+x, k = gauss_seidel(A, b, x0, tol, max_iter)
+
+# Mostrar la solución por pantalla
+print("La solución del sistema es:")
+for i in range(len(x)):
+    print(f"x_{i} = {x[i]:.6f}")
+
+print(f"\nSe realizaron {k} iteraciones.")
+```
+
+
+### Comparación de métodos
+
+| Método                | Ventajas                                                                                                                    | Desventajas                                                              | Mejor para                                        |
+|-----------------------|-----------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|---------------------------------------------------|
+| Eliminación Gaussiana | Fácil de implementar                                                                                                        | puede requerir mucho tiempo y memoria en sistemas grandes                | casi todos los sistemas (excepto Sparce Matrixes) |
+| Factorización LU      | Puede ser más rápido que la eliminación gaussiana si la matriz se factoriza una vez y luego se resuelven múltiples sistemas | Requiere más memoria que la eliminación gaussiana pues genera 2 matrices |
+| Método de Jacobi      | Converge si la matriz es diagonal dominante                                                                                 | Lento para matrices grandes , puede no converger                         |
+| Gauss Seidel          | Converge más rápido que el método de Jacobi                                                                                 | No siempre converge                                                      |
+
+
 
 
 ###### Referencias:
 1. Libro de la clase
 2. Talleres del curso subidos a E-aulas
+3. Numerical Analysis de Timothy Sauer 
+4. Numerical Recipes de Press et al.
 
 ###### Trabajo pendiente: 
 1. Preguntar sobre que hacer con los métodos iterativos que ya están programados.
