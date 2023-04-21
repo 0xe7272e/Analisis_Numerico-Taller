@@ -1,7 +1,0 @@
-| Método                | Ventajas                                                                                                                    | Desventajas                                                              | Mejor para                                        |
-|-----------------------|-----------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|---------------------------------------------------|
-| Eliminación Gaussiana | Fácil de implementar                                                                                                        | puede requerir mucho tiempo y memoria en sistemas grandes                | casi todos los sistemas (excepto Sparce Matrixes) |
-| Factorización LU      | Puede ser más rápido que la eliminación gaussiana si la matriz se factoriza una vez y luego se resuelven múltiples sistemas | Requiere más memoria que la eliminación gaussiana pues genera 2 matrices |
-| Método de Jacobi      | Converge si la matriz es diagonal dominante                                                                                 | Lento para matrices grandes , puede no converger                         |
-| Gauss Seidel          | Converge más rápido que el método de Jacobi                                                                                 | No siempre converge                                                      |
-
