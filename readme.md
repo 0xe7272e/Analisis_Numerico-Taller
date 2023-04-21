@@ -397,16 +397,31 @@ Los métodos iterativos directos resuelven el sistema de ecuaciones lineales med
 
 Los métodos iterativos indirectos (o de punto fijo) resuelven el sistema de ecuaciones lineales mediante la aplicación repetida de una fórmula de recurrencia que produce una secuencia de vectores que se acercan gradualmente a la solución exacta del sistema. Algunos ejemplos de métodos iterativos indirectos son el método de Jacobi, el método de Gauss-Seidel y el método de relajación.
 
-### Diferencias:
+#### Diferencias:
 
-| Ventajas de los métodos iterativos indirectos | Desventajas de los métodos iterativos indirectos |
-| -------------------------------------------- | ----------------------------------------------- |
-| - Requieren menos memoria que los métodos directos, lo que los hace adecuados para sistemas grandes y dispersos. | - Pueden converger lentamente o no converger en absoluto para algunos sistemas. |
-| - Se pueden aplicar a matrices no simétricas y no definidas positivas. | - Pueden ser más difíciles de implementar y ajustar que los métodos directos. |
-| - Son más eficientes en términos de tiempo computacional para matrices dispersas. | - Pueden requerir un conocimiento previo de la matriz para establecer los parámetros de convergencia adecuados. |
-| - Son iterativos, lo que permite la posibilidad de una interrupción temprana si se alcanza una solución aceptable antes de que se completen todas las iteraciones. | - Pueden ser más susceptibles a errores de redondeo que los métodos directos. |
-| - Permiten la aplicación de técnicas de precondicionamiento que mejoran su eficiencia. | - Pueden requerir más iteraciones que los métodos directos para alcanzar la solución deseada. |
+| Ventajas de los métodos iterativos indirectos                                                                                                                      | Desventajas de los métodos iterativos indirectos                                                                |
+| --------------------------------------------                                                                                                                       | -----------------------------------------------                                                                 |
+| - Requieren menos memoria que los métodos directos, lo que los hace adecuados para sistemas grandes y dispersos.                                                   | - Pueden converger lentamente o no converger en absoluto para algunos sistemas.                                 |
+| - Se pueden aplicar a matrices no simétricas y no definidas positivas.                                                                                             | - Pueden ser más difíciles de implementar y ajustar que los métodos directos.                                   |
+| - Son más eficientes en términos de tiempo computacional para matrices dispersas.                                                                                  | - Pueden requerir un conocimiento previo de la matriz para establecer los parámetros de convergencia adecuados. |
+| - Son iterativos, lo que permite la posibilidad de una interrupción temprana si se alcanza una solución aceptable antes de que se completen todas las iteraciones. | - Pueden ser más susceptibles a errores de redondeo que los métodos directos.                                   |
+| - Permiten la aplicación de técnicas de precondicionamiento que mejoran su eficiencia.                                                                             | - Pueden requerir más iteraciones que los métodos directos para alcanzar la solución deseada.                   |
+| son buenos para solucionar matrices escasas (matrices que tienen muchos 0's y pocos 1's                                                                                                                        | no son buenos para solucionar matrices escasas                                                                  |
 
+
+
+
+#### Método de jacobi
+
+El método de Jacobi es un método iterativo utilizado para resolver sistemas de ecuaciones lineales de la forma $Ax=b$, donde $A$ es una matriz cuadrada y $x$ y $b$ son vectores. Este método es uno de los métodos iterativos más simples y populares en el análisis numérico.
+
+El método de Jacobi comienza con una aproximación inicial $x^{(0)}$ de la solución $x$ y luego produce una secuencia de vectores $x^{(1)}, x^{(2)}, \dots, x^{(k)}$ que se acercan gradualmente a la solución exacta. En cada iteración, el método de Jacobi actualiza cada componente de $x^{(k)}$ mediante la siguiente fórmula:
+
+$$
+x_i^{(k+1)} = \frac{1}{a_{ii}}\left(b_i - \sum_{j \neq i}a_{ij}x_j^{(k)}\right), \quad i = 1, \dots, n
+$$
+
+donde $n$ es la dimensión de la matriz $A$ y $a_{ij}$ es el elemento de la matriz $A$ en la fila $i$ y la columna $j$. La fórmula actualiza cada componente $x_i^{(k+1)}$ de $x^{(k+1)}$ utilizando los valores antiguos de los componentes $x_j^{(k)}$ para $j \neq i$.
 
 
 
